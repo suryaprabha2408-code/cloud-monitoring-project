@@ -1,13 +1,21 @@
-import random
-import time
+﻿from flask import Flask
 
-THRESHOLD = 80
+app = Flask(__name__)
 
-while True:
-    usage = random.randint(50, 120)
-    print(f"Current Usage: {usage}")
+@app.route("/")
+def home():
+    usage = 85   # sample value
 
-    if usage > THRESHOLD:
-        print(f"ALERT! High usage detected: {usage}")
+    if usage > 100:
+        status = "ALERT 🚨"
+    else:
+        status = "SAFE ✅"
 
-    time.sleep(10)
+    return f"""
+    <h1>Cloud Monitoring System</h1>
+    <h2>Current Usage: {usage}</h2>
+    <h2>Status: {status}</h2>
+    """
+
+if __name__ == "__main__":
+    app.run(debug=True)

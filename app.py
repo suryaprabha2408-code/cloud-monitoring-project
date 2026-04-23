@@ -1,6 +1,7 @@
 from flask import Flask
 import psutil
 import os
+from datetime import datetime
 
 app = Flask(__name__)
 
@@ -16,13 +17,19 @@ def home():
         status = "SAFE ✅"
         color = "green"
 
+    # 🔥 LOGGING PART
+    log = f"{datetime.now()} | CPU: {cpu}% | Memory: {memory}% | Status: {status}\n"
+    
+    with open("logs.txt", "a") as f:
+        f.write(log)
+
     return f"""
     <h1>Cloud Monitoring System</h1>
     <h2>CPU Usage: {cpu}%</h2>
     <h2>Memory Usage: {memory}%</h2>
     <h2 style='color: {color}'>Status: {status}</h2>
     """
-
+    
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)

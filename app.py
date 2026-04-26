@@ -1,35 +1,35 @@
 from flask import Flask
 import psutil
-import os
 from datetime import datetime
 
 app = Flask(__name__)
 
-@app.route("/")
+@app.route('/')
 def home():
-    cpu = psutil.cpu_percent(interval=1)
+    cpu = psutil.cpu_percent()
     memory = psutil.virtual_memory().percent
 
-    if cpu > 80 or memory > 80:
-        status = "ALERT 🚨"
-        color = "red"
-    else:
-        status = "SAFE ✅"
-        color = "green"
+    status = "SAFE ✅"
+    alert = ""
 
-    # 🔥 LOGGING PART
+    # 🔥 ALERT CONDITION
+    if cpu > 50 or memory > 50:
+        status = "DANGER ⚠️"
+        alert = "🚨 ALERT: High Resource Usage!"
+
+    # 📝 LOG WRITE
     log = f"{datetime.now()} | CPU: {cpu}% | Memory: {memory}% | Status: {status}\n"
-    
     with open("logs.txt", "a") as f:
         f.write(log)
 
+    # 🌐 OUTPUT
     return f"""
     <h1>Cloud Monitoring System</h1>
-    <h2>CPU Usage: {cpu}%</h2>
-    <h2>Memory Usage: {memory}%</h2>
-    <h2 style='color: {color}'>Status: {status}</h2>
+    <p>CPU Usage: {cpu}%</p>
+    <p>Memory Usage: {memory}%</p>
+    <p>Status: {status}</p>
+    <h2 style='color:red;'>{alert}</h2>
     """
     
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port)
+    app.run(host="0.0.0.0", port=5000)

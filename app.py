@@ -1,8 +1,24 @@
 from flask import Flask
 import psutil
 from datetime import datetime
+import requests
 
 app = Flask(__name__)
+def send_email(cpu, memory, status):
+    url = "https://api.emailjs.com/api/v1.0/email/send"
+
+    data = {
+        "service_id": "service_l02zigf",
+        "template_id": "template_k6hdfcm",
+        "user_id": "Hu5lYNGCkePdHkQ0n",
+        "template_params": {
+            "cpu": cpu,
+            "memory": memory,
+            "status": status
+        }
+    }
+
+    requests.post(url, json=data)
 
 @app.route('/')
 def home():
@@ -16,6 +32,7 @@ def home():
     if cpu > 50 or memory > 50:
         status = "DANGER ⚠️"
         alert = "🚨 ALERT: High Resource Usage!"
+        send_email(cpu, memory, status)
 
     # 📝 LOG WRITE
     log = f"{datetime.now()} | CPU: {cpu}% | Memory: {memory}% | Status: {status}\n"
